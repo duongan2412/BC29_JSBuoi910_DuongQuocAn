@@ -34,6 +34,14 @@ function DanhSachNhanVien() {
             this.arr[index] = sv;
         }
     };
-    this.timKiemNV = function () { };
+    this.timkiemNV = function (keyword) {
+        var mangTimKiem = [];
+        this.arr.forEach(function (item) {
+            if (item.xepLoai.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
+                mangTimKiem.push(item);
+            }
+        })
+        return mangTimKiem;
+    }
 }
 

@@ -103,6 +103,7 @@ function suaNV(id) {
     };
     getEle("tknv").disabled = true;
     getEle("btnThemNV").disabled = true;
+    getEle("btnCapNhat").disabled = false;
 }
 
 getEle("btnCapNhat").onclick = function () {
@@ -112,3 +113,13 @@ getEle("btnCapNhat").onclick = function () {
     setLocalStorage();
 }
 
+getEle("btnThem").onclick = function () {
+    getEle("btnThemNV").disabled = false;
+    getEle("btnCapNhat").disabled = true;
+}
+
+getEle("btnTimNV").onclick = function () {
+    var keyword = getEle("searchName").value;
+    var mangTimKiem = dsnv.timkiemNV(keyword);
+    taoBang(mangTimKiem);
+}
