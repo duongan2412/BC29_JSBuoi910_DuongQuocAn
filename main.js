@@ -55,10 +55,15 @@ function taoBang(data) {
               <td>${item.chucVu}</td>
               <td>${item.tongLuong}</td>
               <td>${item.xepLoai}</td>
+              <td>
+                    <button class="btn btn-info" data-toggle="modal" data-target="#myModal" onclick="suaNV('${item.tkNV}')">Sửa</button>
+                    <button class="btn btn-danger" onclick="xoaNV('${item.tkNV}')">Xóa</button>
+              </td>   
           </tr>
       `;
     });
     getEle("tableDanhSach").innerHTML = content;
+    setLocalStorage();
 }
 
 function setLocalStorage() {
@@ -76,5 +81,34 @@ function getLocalStorage() {
         dsnv.arr = dataJson;
         taoBang(dsnv.arr);
     }
+}
+
+function xoaNV(id) {
+    dsnv.xoaNV(id);
+    taoBang(dsnv.arr);
+    setLocalStorage();
+}
+
+function suaNV(id) {
+    var nv = dsnv.suaNV(id);
+    if (nv) {
+        getEle("tknv").value = nv.tkNV;
+        getEle("name").value = nv.hotenNV;
+        getEle("email").value = nv.emailNV;
+        getEle("password").value = nv._mkNV;
+        getEle("datepicker").value = nv.ngayLam;
+        getEle("luongCB").value = nv.luongCB;
+        getEle("chucvu").value = nv.chucVu;
+        getEle("gioLam").value = nv.gioLam;
+    };
+    getEle("tknv").disabled = true;
+    getEle("btnThemNV").disabled = true;
+}
+
+getEle("btnCapNhat").onclick = function () {
+    var nhanVien = layThongTinNV();
+    dsnv.capNhat(nhanVien);
+    taoBang(dsnv.arr);
+    setLocalStorage();
 }
 

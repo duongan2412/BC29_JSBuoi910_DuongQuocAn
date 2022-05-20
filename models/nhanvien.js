@@ -15,7 +15,7 @@ function NhanVien(_tkNV, _hotenNV, _emailNV, _mkNV, _ngayLam, _luongCB, _chucVu,
             case "Sếp":
                 this.tongLuong = this.luongCB * 3;
                 break;
-            case "Trưởng Phòng":
+            case "Trưởng phòng":
                 this.tongLuong = this.luongCB * 2;
                 break;
             default:
