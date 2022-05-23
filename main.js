@@ -1,12 +1,12 @@
 var dsnv = new DanhSachNhanVien();
-
+var valid = new Validation();
 getLocalStorage();
 
 function getEle(id) {
     return document.getElementById(id);
 }
 
-function layThongTinNV() {
+function layThongTinNV(isAdd) {
     var _tkNV = getEle("tknv").value;
     var _hotenNV = getEle("name").value;
     var _emailNV = getEle("email").value;
@@ -15,6 +15,53 @@ function layThongTinNV() {
     var _luongCB = getEle("luongCB").value;
     var _chucVu = getEle("chucvu").value;
     var _gioLam = getEle("gioLam").value;
+
+    // Validation
+    var isValid = true;
+
+    if (isAdd) {
+        // tkNV
+        isValid &= valid.kiemTraRong(_tkNV, "tbTKNV", "(*) Vui lòng nhập tài khoản nhân viên") &&
+            valid.kiemTraDoDai(_tkNV, "tbTKNV", "(*) Độ dài từ 4 - 6 ký tự", 4, 6) &&
+            valid.kiemTraTkNVTonTai(_tkNV, "tbTKNV", "(*) Tài khoản đã tồn tại", dsnv.arr)
+    }
+
+    // tenNV
+    isValid &=
+        valid.kiemTraRong(_hotenNV, "tbTen", "(*) Vui lòng nhập tên nhân viên") &&
+        valid.kiemTraChuoiKiTu(_hotenNV, "tbTen", "(*) Vui lòng nhập chuỗi ký tự");
+
+    // emailNV
+    isValid &=
+        valid.kiemTraRong(_emailNV, "tbEmail", "(*) Vui lòng nhập email nhân viên") &&
+        valid.kiemTraEmail(_emailNV, "tbEmail", "(*) Vui lòng nhập đúng định dạng email");
+
+    // mat khau 
+    isValid &=
+        valid.kiemTraRong(_mkNV, "tbMatKhau", "(*) Vui lòng nhập mật khẩu nhân viên") &&
+        valid.kiemTraDoDai(_mkNV, "tbMatKhau", "(*) Độ dài từ 6 - 10 ký tự", 6, 10) &&
+        valid.kiemTraMatKhau(_mkNV, "tbMatKhau", "(*) Mật khẩu phải có 1 ký tự số, 1 ký tự hoa, 1 ký tự đặc biệt");
+
+    // ngay hop le
+    isValid &=
+        valid.kiemTraRong(_ngayLam, "tbNgay", "(*) Vui lòng nhập ngày làm") &&
+        valid.kiemTraNgayHopLe(_ngayLam, "tbNgay", "(*) Vui lòng nhập đúng định dạng mm/dd/yyyy");
+
+    // luong hop le
+    isValid &=
+        valid.kiemTraRong(_luongCB, "tbLuongCB", "(*) Vui lòng nhập lương") &&
+        valid.kiemTraMinMax(_luongCB, "tbLuongCB", "(*) Vui lòng nhập lương từ 1 triệu đến 20 triệu", 1e6, 2e7);
+
+    // chuc vu hop le
+    isValid &= valid.kiemTraChucVu("chucvu", "tbChucVu", "(*) Vui lòng chọn chức vụ");
+
+    // gio Lam hop le
+    isValid &=
+        valid.kiemTraRong(_gioLam, "tbGiolam", "(*) Vui lòng nhập giờ làm") &&
+        valid.kiemTraMinMax(_gioLam, "tbGiolam", "(*) Vui lòng nhập giờ làm từ 80 đến 200 giờ ", 80, 200);
+
+    //check isValid
+    if (!isValid) return;
 
     //Tao doi tuong 
     var nhanVien = new NhanVien(
@@ -37,10 +84,13 @@ function layThongTinNV() {
 
 // Them nhan vien
 getEle("btnThemNV").onclick = function () {
-    var nhanVien = layThongTinNV();
-    dsnv.themNV(nhanVien)
-    taoBang(dsnv.arr);
-    setLocalStorage();
+    var nhanVien = layThongTinNV(true);
+    if (nhanVien) {
+        dsnv.themNV(nhanVien)
+        taoBang(dsnv.arr);
+        setLocalStorage();
+        resetValue();
+    }
 };
 
 function taoBang(data) {
@@ -95,7 +145,7 @@ function suaNV(id) {
         getEle("tknv").value = nv.tkNV;
         getEle("name").value = nv.hotenNV;
         getEle("email").value = nv.emailNV;
-        getEle("password").value = nv._mkNV;
+        getEle("password").value = nv.mkNV;
         getEle("datepicker").value = nv.ngayLam;
         getEle("luongCB").value = nv.luongCB;
         getEle("chucvu").value = nv.chucVu;
@@ -107,7 +157,7 @@ function suaNV(id) {
 }
 
 getEle("btnCapNhat").onclick = function () {
-    var nhanVien = layThongTinNV();
+    var nhanVien = layThongTinNV(false);
     dsnv.capNhat(nhanVien);
     taoBang(dsnv.arr);
     setLocalStorage();
@@ -122,4 +172,15 @@ getEle("btnTimNV").onclick = function () {
     var keyword = getEle("searchName").value;
     var mangTimKiem = dsnv.timkiemNV(keyword);
     taoBang(mangTimKiem);
+}
+
+function resetValue() {
+    getEle("tknv").value = "";
+    getEle("name").value = "";
+    getEle("email").value = "";
+    getEle("password").value = "";
+    getEle("datepicker").value = "";
+    getEle("luongCB").value = "";
+    getEle("chucvu").value = "";
+    getEle("gioLam").value = "";
 }
